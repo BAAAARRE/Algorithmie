@@ -151,3 +151,20 @@ class Calculate:
                 data[name_file][id]['ranking'] = rank
                 rank += 1
         return data
+
+
+class Visualisation:
+    """
+
+    """
+    @staticmethod
+    def ranking(data):
+        for name_file in data:
+            print('\n')
+            print('----------')
+            print(name_file)
+            print('----------')
+            print('\n')
+            print("{:<14} {:<10} {:<8}".format('Classement', 'Id Voilier', 'Vitesse'))
+            for id in data[name_file]:
+                print("N°{:<12} {:<10} {} km/h".format(data[name_file][id]['ranking'], id, data[name_file][id]['speed']))

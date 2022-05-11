@@ -1,4 +1,4 @@
-from tools.utils import DataPreparator, Calculate
+from tools.utils import DataPreparator, Calculate, Visualisation
 
 lat_finish = 12.056097
 lon_finish = 61.748800
@@ -13,7 +13,7 @@ def main():
     data_speed = Calculate.speed_between_two_points(data_distance)
     data_ranking = Calculate.ranking_sail_boat(data_speed)
 
-    print(data_ranking)
+    Visualisation.ranking(data_ranking)
 
 
 if __name__ == '__main__':
