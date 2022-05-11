@@ -21,48 +21,93 @@ class DataPreparator:
     def open_positions(all_positions_files):
         """
         Open all positions file ant put all lines in a list
-        :return: list.
+        :return: dict.
         """
-        list_positions = []
+        raw_data = {}
         for position_file in all_positions_files:
+            list_positions = []
             with open(f"data/positions/{position_file}") as file:
                 for line in file:
                     if line != 'POSADRENA\n':
                         list_positions.append(line.split('\t'))
-        return list_positions
+            raw_data[position_file] = list_positions
+        return raw_data
 
     @staticmethod
-    def list_positions_to_dict(list_positions):
+    def raw_positions_to_dict(raw_data):
         """
         Put list_positions elements in a dict with incremental id in key for line,
         and all lines element wih name in key and value in value.
         :param list_positions: list.
         :return: dict.
         """
-        id = 0
-        dict_positions = {}
-        for position in list_positions:
-            dict_positions[id] = {}
-            list_position = position[0].split(';')
+        data = {}
+        for name_file in raw_data:
+            id = 0
+            new_name_file = name_file[14:-4]
+            data[new_name_file] = {}
+            for line in raw_data[name_file]:
+                # print(line)
+                data[new_name_file][id] = {}
+                list_position = line[0].split(';')
 
-            dict_positions[id]['id_voilier'] = list_position[1]
-            dict_positions[id]['latitude'] = list_position[2]
-            dict_positions[id]['longitude'] = list_position[3]
-            dict_positions[id]['date'] = list_position[4]
+                data[new_name_file][id]['id_voilier'] = list_position[1]
+                data[new_name_file][id]['latitude'] = list_position[2]
+                data[new_name_file][id]['longitude'] = list_position[3]
+                data[new_name_file][id]['date'] = list_position[4]
 
-            id += 1
-            return dict_positions
+                id += 1
+        return data
 
     @staticmethod
-    def clean_dict_positions(dict_positions):
+    def clean_dict_positions(data):
         """
 
         :param dict_positions: dict.
         :return: dict.
         """
-        for id in dict_positions:
-            dict_positions[id]['date'] = dict_positions[id]['date'].replace("\n", "")
-            dict_positions[id]['latitude'] = float(dict_positions[id]['latitude'].replace("N", ""))
-            dict_positions[id]['longitude'] = float(dict_positions[id]['longitude'].replace("W", ""))
+        for name_file in data:
+            for id in data[name_file]:
+                data[name_file][id]['date'] = data[name_file][id]['date'].replace("\n", "")
+                data[name_file][id]['latitude'] = float(data[name_file][id]['latitude'].replace("N", ""))
+                data[name_file][id]['longitude'] = float(data[name_file][id]['longitude'].replace("W", ""))
 
-        return dict_positions
+        return data
+
+
+class Calculate:
+    @staticmethod
+    def distance_lat_lon(lat1, lon1, lat2, lon2):
+        """
+
+        :param lat1:
+        :param lon1:
+        :param lat2:
+        :param lon2:
+        :return:
+        """
+        radius = 6373.0
+
+        lat1 = math.radians(lat1)
+        lon1 = math.radians(lon1)
+        lat2 = math.radians(lat2)
+        lon2 = math.radians(lon2)
+
+        dlon = lon2 - lon1
+        dlat = lat2 - lat1
+
+        a = math.sin(dlat / 2) ** 2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon / 2) ** 2
+        c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
+
+        distance = round(radius * c, 6)
+        return distance
+
+    @staticmethod
+    def distance_position_finish(data, lat_fin, lon_fin):
+        for name_file in data:
+            for id in data[name_file]:
+                lat_pos = data[name_file][id]['latitude']
+                lon_pos = data[name_file][id]['longitude']
+                distance = Calculate.distance_lat_lon(lat_pos, lon_pos, lat_fin, lon_fin)
+                data[name_file][id]['distance'] = distance
+        return data
