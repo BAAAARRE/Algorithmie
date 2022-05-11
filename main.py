@@ -11,7 +11,6 @@ def main():
 
     data_distance = Calculate.distance_position_finish(data_clean, lat_finish, lon_finish)
     data_ranking = Calculate.ranking_sail_boat(data_distance)
-    print(data_ranking['2021-11-24_20-18-26'])
 
 
 if __name__ == '__main__':

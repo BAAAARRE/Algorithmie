@@ -120,13 +120,6 @@ class Calculate:
         return data
 
     @staticmethod
-    def speed_between_two_position(data):
-        for name_file in data:
-            for id in data[name_file]:
-                data[name_file][id]['distance'] = distance
-
-
-    @staticmethod
     def ranking_sail_boat(data):
         for name_file in data:
             data[name_file] = dict(sorted(data[name_file].items(), key=lambda item: item[1]['distance']))
