@@ -1,4 +1,5 @@
 import os
+import datetime
 import math
 
 
@@ -43,20 +44,17 @@ class DataPreparator:
         """
         data = {}
         for name_file in raw_data:
-            id = 0
             new_name_file = name_file[14:-4]
             data[new_name_file] = {}
             for line in raw_data[name_file]:
-                # print(line)
-                data[new_name_file][id] = {}
                 list_position = line[0].split(';')
+                id = list_position[1]
 
-                data[new_name_file][id]['id_voilier'] = list_position[1]
+                data[new_name_file][id] = {}
                 data[new_name_file][id]['latitude'] = list_position[2]
                 data[new_name_file][id]['longitude'] = list_position[3]
                 data[new_name_file][id]['date'] = list_position[4]
 
-                id += 1
         return data
 
     @staticmethod
@@ -69,6 +67,8 @@ class DataPreparator:
         for name_file in data:
             for id in data[name_file]:
                 data[name_file][id]['date'] = data[name_file][id]['date'].replace("\n", "")
+                data[name_file][id]['date'] = datetime.datetime.strptime(data[name_file][id]['date'],
+                                                                         '%m/%d/%y %H:%M:%S')
                 data[name_file][id]['latitude'] = float(data[name_file][id]['latitude'].replace("N", ""))
                 data[name_file][id]['longitude'] = float(data[name_file][id]['longitude'].replace("W", ""))
 
@@ -117,6 +117,29 @@ class Calculate:
                 lon_pos = data[name_file][id]['longitude']
                 distance = Calculate.distance_lat_lon(lat_pos, lon_pos, lat_fin, lon_fin)
                 data[name_file][id]['distance'] = distance
+        return data
+
+    @staticmethod
+    def speed_between_two_points(data):
+        previous_name_file = list(data.keys())[0]
+        for name_file in data:
+            for id in data[name_file]:
+                previous_distance = data[previous_name_file][id]['distance']
+                actual_distance = data[name_file][id]['distance']
+                data[name_file][id]['distance_with_previous_point'] = previous_distance - actual_distance
+
+                previous_time = data[previous_name_file][id]['date']
+                actual_time = data[name_file][id]['date']
+                data[name_file][id]['time_with_previous_point'] = round((actual_time - previous_time).seconds / 3600, 2)
+
+                if data[name_file][id]['time_with_previous_point'] == 0:
+                    data[name_file][id]['speed'] = 0
+                else:
+                    data[name_file][id]['speed'] = round(
+                        data[name_file][id]['distance_with_previous_point'] / data[name_file][id][
+                            'time_with_previous_point'], 2)
+
+            previous_name_file = name_file
         return data
 
     @staticmethod

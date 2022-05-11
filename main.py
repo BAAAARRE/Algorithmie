@@ -10,7 +10,10 @@ def main():
     data_clean = DataPreparator.clean_dict_positions(data)
 
     data_distance = Calculate.distance_position_finish(data_clean, lat_finish, lon_finish)
-    data_ranking = Calculate.ranking_sail_boat(data_distance)
+    data_speed = Calculate.speed_between_two_points(data_distance)
+    data_ranking = Calculate.ranking_sail_boat(data_speed)
+
+    print(data_ranking)
 
 
 if __name__ == '__main__':
