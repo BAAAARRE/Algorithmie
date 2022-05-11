@@ -4,7 +4,7 @@ import math
 
 class DataPreparator:
     """
-    Class description
+    Class for open, clean and prepare data
     """
 
     @staticmethod
@@ -62,7 +62,7 @@ class DataPreparator:
     @staticmethod
     def clean_dict_positions(data):
         """
-
+        Remove useless characters in fields
         :param dict_positions: dict.
         :return: dict.
         """
@@ -79,7 +79,7 @@ class Calculate:
     @staticmethod
     def distance_lat_lon(lat1, lon1, lat2, lon2):
         """
-
+        Calculate distance in km between two coordinates
         :param lat1:
         :param lon1:
         :param lat2:
@@ -104,10 +104,34 @@ class Calculate:
 
     @staticmethod
     def distance_position_finish(data, lat_fin, lon_fin):
+        """
+        
+        :param data:
+        :param lat_fin:
+        :param lon_fin:
+        :return:
+        """
         for name_file in data:
             for id in data[name_file]:
                 lat_pos = data[name_file][id]['latitude']
                 lon_pos = data[name_file][id]['longitude']
                 distance = Calculate.distance_lat_lon(lat_pos, lon_pos, lat_fin, lon_fin)
                 data[name_file][id]['distance'] = distance
+        return data
+
+    @staticmethod
+    def speed_between_two_position(data):
+        for name_file in data:
+            for id in data[name_file]:
+                data[name_file][id]['distance'] = distance
+
+
+    @staticmethod
+    def ranking_sail_boat(data):
+        for name_file in data:
+            data[name_file] = dict(sorted(data[name_file].items(), key=lambda item: item[1]['distance']))
+            rank = 1
+            for id in data[name_file]:
+                data[name_file][id]['ranking'] = rank
+                rank += 1
         return data
