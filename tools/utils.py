@@ -35,6 +35,23 @@ class DataPreparator:
         return raw_data
 
     @staticmethod
+    def open_sailboats():
+        """
+        Open sailboats file and put it in a dict
+        :return:
+        """
+        list_sailboats = []
+        with open(f"data/voiliers.tsv") as file:
+            for line in file:
+                list_sailboats.append(line.split('\t'))
+
+        dict_sailboats = {}
+        for sailboat in list_sailboats[1:]:
+            dict_sailboats[sailboat[0]] = sailboat[1].replace('\n', '')
+
+        return dict_sailboats
+
+    @staticmethod
     def raw_positions_to_dict(raw_data):
         """
         Put list_positions elements in a dict with incremental id in key for line,
@@ -58,10 +75,11 @@ class DataPreparator:
         return data
 
     @staticmethod
-    def clean_dict_positions(data):
+    def clean_dict_positions(data, sailboats_name):
         """
-        Remove useless characters in fields and put right type
+        Remove useless characters in fields and put right type, and add sailboat's name
         :param data: dict.
+        :param sailboats_name: dict.
         :return: dict.
         """
         for name_file in data:
@@ -72,6 +90,7 @@ class DataPreparator:
                 data[name_file][id]['latitude'] = float(data[name_file][id]['latitude'].replace("N", ""))
                 data[name_file][id]['longitude'] = float(data[name_file][id]['longitude'].replace("W", ""))
 
+                data[name_file][id]['name'] = sailboats_name[id]
         return data
 
 
@@ -180,7 +199,9 @@ class Visualisation:
             print(name_file)
             print('----------')
             print('\n')
-            print("{:<14} {:<10} {:<8}".format('Classement', 'Id Voilier', 'Vitesse'))
+            print("{:<14} {:<22} {:<8} {:<14}".format('Classement', 'Voilier', 'Vitesse', 'Distance'))
             for id in data[name_file]:
                 print(
-                    "N°{:<12} {:<10} {} km/h".format(data[name_file][id]['ranking'], id, data[name_file][id]['speed']))
+                    "N°{:<12} {:<22} {} km/h {} km".format(
+                        data[name_file][id]['ranking'], data[name_file][id]['name'],
+                        data[name_file][id]['speed'], data[name_file][id]['distance']))
