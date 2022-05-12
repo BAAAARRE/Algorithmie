@@ -87,7 +87,8 @@ Dictionnaire avec les données finales :
 * ranking : Permet d'afficher le classement, les vitesses et les distances restantes pour chaque enrigstrement.
 
 ## Execution
-Prérequis : Avoir installé sur ça machine [Python](https://www.python.org/downloads/) et [Git](https://git-scm.com/)
+Prérequis : Avoir installé sur ça machine [Python](https://www.python.org/downloads/) (bien coché add to path lors de
+l'installation et [Git](https://git-scm.com/)
 
 Ouvrir un interpréteur de commandes et lancer les commandes suivantes : 
 
