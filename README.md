@@ -95,6 +95,10 @@ Récupérer le projet :
 ```
 git clone https://github.com/BAAAARRE/Algorithmie.git
 ```
+Accéder au dossier :
+```
+cd Algorithmie
+```
 Créer un environnement virtuel :
 ```
 (Unix /Linux) : python3.8 -m venv venv
@@ -103,7 +107,7 @@ Créer un environnement virtuel :
 Activer l'environnement : 
 ```
 (Unix /Linux) : source venv/bin/activate
-(windows) : ./venv/Scripts/activate.bat
+(windows) : venv\Scripts\activate
 ```
 Lancer le script : 
 ```
