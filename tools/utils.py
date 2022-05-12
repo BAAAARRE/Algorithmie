@@ -21,7 +21,7 @@ class DataPreparator:
     @staticmethod
     def open_positions(all_positions_files):
         """
-        Open all positions file ant put all lines in a list
+        Open all positions file ant put all file in a dict and all lines of file in a list
         :return: dict.
         """
         raw_data = {}
@@ -60,8 +60,8 @@ class DataPreparator:
     @staticmethod
     def clean_dict_positions(data):
         """
-        Remove useless characters in fields
-        :param dict_positions: dict.
+        Remove useless characters in fields and put right type
+        :param data: dict.
         :return: dict.
         """
         for name_file in data:
@@ -76,15 +76,19 @@ class DataPreparator:
 
 
 class Calculate:
+    """
+    Calculate indicators for sailboats
+    """
+
     @staticmethod
     def distance_lat_lon(lat1, lon1, lat2, lon2):
         """
         Calculate distance in km between two coordinates
-        :param lat1:
-        :param lon1:
-        :param lat2:
-        :param lon2:
-        :return:
+        :param lat1: float/integer. Latitude of first point
+        :param lon1: float/integer. Longitude of first point
+        :param lat2: float/integer. Latitude of second point
+        :param lon2: float/integer. Longitude of second point
+        :return: float.
         """
         radius = 6373.0
 
@@ -105,11 +109,11 @@ class Calculate:
     @staticmethod
     def distance_position_finish(data, lat_fin, lon_fin):
         """
-        
-        :param data:
-        :param lat_fin:
-        :param lon_fin:
-        :return:
+        Calculate distance in km between actual position of sailboat and finish point
+        :param data: dict.
+        :param lat_fin: float. Latitude of finish point
+        :param lon_fin: float. Longitude of finish point
+        :return: dict
         """
         for name_file in data:
             for id in data[name_file]:
@@ -121,12 +125,17 @@ class Calculate:
 
     @staticmethod
     def speed_between_two_points(data):
+        """
+        Calculate speed in Km/h for each sailboat between position and previous position
+        :param data: dict.
+        :return: dict.
+        """
         previous_name_file = list(data.keys())[0]
         for name_file in data:
             for id in data[name_file]:
                 previous_distance = data[previous_name_file][id]['distance']
                 actual_distance = data[name_file][id]['distance']
-                data[name_file][id]['distance_with_previous_point'] = previous_distance - actual_distance
+                data[name_file][id]['distance_with_previous_point'] = round(previous_distance - actual_distance, 4)
 
                 previous_time = data[previous_name_file][id]['date']
                 actual_time = data[name_file][id]['date']
@@ -144,6 +153,11 @@ class Calculate:
 
     @staticmethod
     def ranking_sail_boat(data):
+        """
+        Ranking sailboat by their distance to finish point
+        :param data: dict.
+        :return: dict.
+        """
         for name_file in data:
             data[name_file] = dict(sorted(data[name_file].items(), key=lambda item: item[1]['distance']))
             rank = 1
@@ -155,8 +169,9 @@ class Calculate:
 
 class Visualisation:
     """
-
+    Visualise the data
     """
+
     @staticmethod
     def ranking(data):
         for name_file in data:
@@ -167,4 +182,5 @@ class Visualisation:
             print('\n')
             print("{:<14} {:<10} {:<8}".format('Classement', 'Id Voilier', 'Vitesse'))
             for id in data[name_file]:
-                print("N°{:<12} {:<10} {} km/h".format(data[name_file][id]['ranking'], id, data[name_file][id]['speed']))
+                print(
+                    "N°{:<12} {:<10} {} km/h".format(data[name_file][id]['ranking'], id, data[name_file][id]['speed']))
